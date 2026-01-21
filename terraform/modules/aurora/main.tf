@@ -38,6 +38,7 @@ module "this" {
   cluster_instance_class = var.cluster_instance_class
   master_username        = var.master_username
   database_name          = var.database_name
+  port                   = var.aurora_port
 
   manage_master_user_password = true
   apply_immediately           = true
