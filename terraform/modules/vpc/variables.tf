@@ -1,29 +1,29 @@
 variable "name" {
-  description = "Nombre base de la VPC."
+  description = "VPC base name."
   type        = string
 }
 
 variable "vpc_cidr" {
-  description = "CIDR de la VPC."
+  description = "VPC CIDR."
   type        = string
 }
 
 variable "availability_zones" {
-  description = "AZs a usar en la region."
+  description = "AZs to use in the region."
   type        = list(string)
 }
 
 variable "public_subnets_cidrs" {
-  description = "CIDRs para subnets publicas."
+  description = "CIDRs for public subnets."
   type        = list(string)
 }
 
 variable "private_subnets_cidrs" {
-  description = "CIDRs para subnets privadas."
+  description = "CIDRs for private subnets."
   type        = list(string)
 }
 
 variable "tags" {
-  description = "Tags comunes."
+  description = "Common tags."
   type        = map(string)
 }

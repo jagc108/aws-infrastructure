@@ -1,9 +1,9 @@
 output "cluster_endpoint" {
-  description = "Endpoint writer de Aurora."
+  description = "Aurora writer endpoint."
   value       = module.this.cluster_endpoint
 }
 
 output "cluster_reader_endpoint" {
-  description = "Endpoint reader de Aurora."
+  description = "Aurora reader endpoint."
   value       = module.this.cluster_reader_endpoint
 }

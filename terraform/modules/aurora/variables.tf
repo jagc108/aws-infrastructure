@@ -1,50 +1,50 @@
 variable "name" {
-  description = "Nombre del cluster Aurora."
+  description = "Aurora cluster name."
   type        = string
 }
 
 variable "engine" {
-  description = "Motor de Aurora."
+  description = "Aurora engine."
   type        = string
 }
 
 variable "engine_version" {
-  description = "Version del motor."
+  description = "Engine version."
   type        = string
 }
 
 variable "cluster_instance_class" {
-  description = "Clase de instancia para el cluster."
+  description = "Cluster instance class."
   type        = string
 }
 
 variable "master_username" {
-  description = "Usuario administrador."
+  description = "Admin username."
   type        = string
 }
 
 variable "database_name" {
-  description = "Nombre de la base de datos inicial."
+  description = "Initial database name."
   type        = string
 }
 
 variable "aurora_port" {
-  description = "Puerto de Aurora usado por el cluster y el security group."
+  description = "Aurora port used by the cluster and security group."
   type        = number
 }
 
 variable "vpc_id" {
-  description = "ID de la VPC."
+  description = "VPC ID."
   type        = string
 }
 
 variable "subnet_ids" {
-  description = "Subnets privadas para Aurora."
+  description = "Private subnets for Aurora."
   type        = list(string)
 }
 
 variable "eks_node_security_group_id" {
-  description = "Security group de nodos EKS para permitir acceso."
+  description = "EKS node security group to allow access."
   type        = string
 }
 
@@ -55,6 +55,6 @@ variable "allowed_egress_cidr_blocks" {
 }
 
 variable "tags" {
-  description = "Tags comunes."
+  description = "Common tags."
   type        = map(string)
 }

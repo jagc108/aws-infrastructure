@@ -1,105 +1,105 @@
 variable "project" {
-  description = "Nombre del proyecto que se usará como prefijo."
+  description = "Project name used as a prefix."
   type        = string
 }
 
 variable "environment" {
-  description = "Entorno (dev, stage, prod, ...)."
+  description = "Environment (dev, stage, prod, ...)."
   type        = string
 }
 
 variable "region" {
-  description = "Región de AWS donde desplegar el EKS."
+  description = "AWS region to deploy EKS."
   type        = string
 }
 
 variable "vpc_cidr" {
-  description = "CIDR de la VPC."
+  description = "VPC CIDR."
   type        = string
 }
 
 variable "availability_zones" {
-  description = "AZs a usar en la región."
+  description = "AZs to use in the region."
   type        = list(string)
 }
 
 variable "public_subnets_cidrs" {
-  description = "CIDRs para subnets públicas."
+  description = "CIDRs for public subnets."
   type        = list(string)
 }
 
 variable "private_subnets_cidrs" {
-  description = "CIDRs para subnets privadas."
+  description = "CIDRs for private subnets."
   type        = list(string)
 }
 
 variable "kubernetes_version" {
-  description = "Versión de Kubernetes para el clúster de EKS."
+  description = "Kubernetes version for the EKS cluster."
   type        = string
 }
 
 variable "eks_instance_types" {
-  description = "Tipos de instancia para los node groups."
+  description = "Instance types for the node groups."
   type        = list(string)
 }
 
 variable "eks_endpoint_public_access_cidrs" {
-  description = "CIDR blocks permitidos para el endpoint publico de EKS."
+  description = "CIDR blocks allowed for the EKS public endpoint."
   type        = list(string)
 }
 
 variable "eks_min_size" {
-  description = "Tamaño mínimo del node group."
+  description = "Minimum node group size."
   type        = number
 }
 
 variable "eks_max_size" {
-  description = "Tamaño máximo del node group."
+  description = "Maximum node group size."
   type        = number
 }
 
 variable "eks_desired_size" {
-  description = "Tamaño deseado del node group."
+  description = "Desired node group size."
   type        = number
 }
 
 variable "eks_admin_principals" {
-  description = "Lista de ARNs que tendran acceso admin al cluster via access entries."
+  description = "List of ARNs that have admin access to the cluster via access entries."
   type        = list(string)
 }
 
 # Opcional si quieres parametrizar el profile
 variable "aws_profile" {
-  description = "AWS profile (si se usa)."
+  description = "AWS profile (if used)."
   type        = string
 }
 
 variable "aurora_engine" {
-  description = "Motor de Aurora (aurora-mysql o aurora-postgresql)."
+  description = "Aurora engine (aurora-mysql or aurora-postgresql)."
   type        = string
 }
 
 variable "aurora_engine_version" {
-  description = "Version del motor de Aurora."
+  description = "Aurora engine version."
   type        = string
 }
 
 variable "aurora_instance_class" {
-  description = "Clase de instancia para Aurora."
+  description = "Aurora instance class."
   type        = string
 }
 
 variable "aurora_master_username" {
-  description = "Usuario administrador de Aurora."
+  description = "Aurora admin username."
   type        = string
 }
 
 variable "aurora_database_name" {
-  description = "Nombre de la base de datos inicial."
+  description = "Initial database name."
   type        = string
 }
 
 variable "aurora_port" {
-  description = "Puerto de Aurora (3306 MySQL, 5432 PostgreSQL)."
+  description = "Aurora port (3306 MySQL, 5432 PostgreSQL)."
   type        = number
 }

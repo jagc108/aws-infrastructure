@@ -1,14 +1,14 @@
 output "cluster_name" {
-  description = "Nombre del cluster EKS."
+  description = "EKS cluster name."
   value       = module.this.cluster_name
 }
 
 output "cluster_endpoint" {
-  description = "Endpoint del cluster EKS."
+  description = "EKS cluster endpoint."
   value       = module.this.cluster_endpoint
 }
 
 output "node_security_group_id" {
-  description = "Security group de los nodos EKS."
+  description = "EKS node security group."
   value       = module.this.node_security_group_id
 }

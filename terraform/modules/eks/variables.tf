@@ -1,20 +1,20 @@
 variable "name" {
-  description = "Nombre del cluster EKS."
+  description = "EKS cluster name."
   type        = string
 }
 
 variable "kubernetes_version" {
-  description = "Version de Kubernetes."
+  description = "Kubernetes version."
   type        = string
 }
 
 variable "vpc_id" {
-  description = "ID de la VPC."
+  description = "VPC ID."
   type        = string
 }
 
 variable "subnet_ids" {
-  description = "Subnets para el cluster y los node groups."
+  description = "Subnets for the cluster and node groups."
   type        = list(string)
 }
 
@@ -24,31 +24,31 @@ variable "endpoint_public_access_cidrs" {
 }
 
 variable "eks_min_size" {
-  description = "Tamaño minimo del node group."
+  description = "Minimum node group size."
   type        = number
 }
 
 variable "eks_max_size" {
-  description = "Tamaño maximo del node group."
+  description = "Maximum node group size."
   type        = number
 }
 
 variable "eks_desired_size" {
-  description = "Tamaño deseado del node group."
+  description = "Desired node group size."
   type        = number
 }
 
 variable "eks_instance_types" {
-  description = "Tipos de instancia para el node group."
+  description = "Node group instance types."
   type        = list(string)
 }
 
 variable "eks_admin_principals" {
-  description = "Lista de ARNs con permisos de admin via access entries."
+  description = "List of ARNs with admin permissions via access entries."
   type        = list(string)
 }
 
 variable "tags" {
-  description = "Tags comunes."
+  description = "Common tags."
   type        = map(string)
 }

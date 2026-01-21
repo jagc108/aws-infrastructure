@@ -1,14 +1,14 @@
 output "vpc_id" {
-  description = "ID de la VPC."
+  description = "VPC ID."
   value       = module.this.vpc_id
 }
 
 output "public_subnets" {
-  description = "IDs de subnets publicas."
+  description = "Public subnet IDs."
   value       = module.this.public_subnets
 }
 
 output "private_subnets" {
-  description = "IDs de subnets privadas."
+  description = "Private subnet IDs."
   value       = module.this.private_subnets
 }
