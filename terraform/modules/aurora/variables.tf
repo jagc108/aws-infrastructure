@@ -29,7 +29,7 @@ variable "database_name" {
 }
 
 variable "aurora_port" {
-  description = "Puerto de Aurora."
+  description = "Puerto de Aurora usado por el cluster y el security group."
   type        = number
 }
 
