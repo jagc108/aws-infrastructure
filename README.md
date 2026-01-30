@@ -44,7 +44,7 @@ Detailed diagram (AZs and dependencies):
 ## Modules
 
 - `terraform/modules/vpc`: VPC with public/private subnets and NAT Gateway.
-- `terraform/modules/eks`: EKS cluster with managed node group and IRSA enabled.
+- `terraform/modules/eks`: EKS cluster with managed node group, IRSA enabled, and configurable EKS add-ons.
 - `terraform/modules/aurora`: Aurora cluster with dedicated SG and access from EKS nodes.
 
 ## Inputs (env/test)
@@ -67,6 +67,7 @@ Defined in `terraform/env/test/variables.tf` and exemplified in
 | eks_min_size | Minimum node group size. | number |
 | eks_max_size | Maximum node group size. | number |
 | eks_desired_size | Desired node group size. | number |
+| eks_addons | EKS add-ons configuration map. | map(any) |
 | eks_admin_principals | List of ARNs with cluster admin access. | list(string) |
 | aws_profile | AWS profile (if used). | string |
 | aurora_engine | Aurora engine. | string |
@@ -94,3 +95,4 @@ Defined in `terraform/env/test/outputs.tf`.
 
 - Aurora uses `manage_master_user_password = true`; the password is managed in AWS.
 - Aurora security allows access from the EKS node security group.
+- EKS add-on versions are pinned per environment in `terraform/env/test/terraform.tfvars` via `eks_addons`.
