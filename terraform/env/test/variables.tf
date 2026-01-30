@@ -63,6 +63,11 @@ variable "eks_desired_size" {
   type        = number
 }
 
+variable "eks_addons" {
+  description = "EKS addons configuration map passed to the EKS module."
+  type        = map(any)
+}
+
 variable "eks_admin_principals" {
   description = "List of ARNs that have admin access to the cluster via access entries."
   type        = list(string)

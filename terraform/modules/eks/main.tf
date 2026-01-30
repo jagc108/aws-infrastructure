@@ -15,6 +15,8 @@ module "this" {
   endpoint_public_access_cidrs = var.endpoint_public_access_cidrs
   enable_irsa                  = true
 
+  addons = var.eks_addons
+
   access_entries = {
     for idx, arn in var.eks_admin_principals :
     "admin_${idx}" => {

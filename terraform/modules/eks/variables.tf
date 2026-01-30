@@ -52,3 +52,8 @@ variable "tags" {
   description = "Common tags."
   type        = map(string)
 }
+
+variable "eks_addons" {
+  description = "EKS addons configuration map passed to the EKS module."
+  type        = map(any)
+}

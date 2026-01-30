@@ -23,6 +23,7 @@ module "eks" {
   eks_max_size       = var.eks_max_size
   eks_desired_size   = var.eks_desired_size
   eks_instance_types = var.eks_instance_types
+  eks_addons         = var.eks_addons
 
   eks_admin_principals = var.eks_admin_principals
 
