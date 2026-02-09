@@ -1,0 +1,152 @@
+name: Terraform Plan & Scan - Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "terraform/env/test/**"
+      - "terraform/modules/**"
+
+jobs:
+  scans:
+    permissions:
+      contents: read
+      security-events: write
+    uses: jagc108/scan-vulnerabilities/.github/workflows/terraform/all-scans.yaml@main
+    with:
+      working-directory: terraform/env/test
+    secrets:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+
+  terraform:
+    name: Terraform (init/fmt/validate/plan)
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: terraform/env/test
+    env:
+      TF_IN_AUTOMATION: "true"
+      AWS_REGION: ${{ vars.AWS_REGION != '' && vars.AWS_REGION || 'us-east-1' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate AWS OIDC config
+        run: |
+          if [ -z "${{ vars.AWS_ROLE_TO_ASSUME }}" ]; then
+            echo "Missing repository variable AWS_ROLE_TO_ASSUME"
+            exit 1
+          fi
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v5.0.0
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: terraform-plan-pr-${{ github.run_id }}
+          mask-aws-account-id: true
+          unset-current-credentials: true
+
+      - name: Terraform Init
+        run: terraform init -input=false -no-color
+
+      - name: Terraform Fmt Check
+        run: terraform fmt -check -recursive -no-color
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          set +e
+          terraform plan -input=false -no-color -out=tfplan -detailed-exitcode > plan_raw.txt
+          exit_code=$?
+          set -e
+
+          if [ "$exit_code" -eq 1 ]; then
+            echo "Terraform plan failed"
+            exit 1
+          fi
+
+          if [ "$exit_code" -eq 2 ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          terraform show -no-color tfplan > plan.txt
+
+      - name: Upload plan artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: terraform/env/test/plan.txt
+          if-no-files-found: ignore
+
+      - name: Comment plan in PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        env:
+          HAS_CHANGES: ${{ steps.plan.outputs.has_changes }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const marker = '<!-- terraform-plan-comment -->';
+            const planPath = path.join(process.env.GITHUB_WORKSPACE, 'terraform/env/test/plan.txt');
+
+            let plan = 'No se encontró salida de plan.';
+            if (fs.existsSync(planPath)) {
+              plan = fs.readFileSync(planPath, 'utf8');
+            }
+
+            const maxLen = 60000;
+            if (plan.length > maxLen) {
+              plan = `${plan.slice(0, maxLen)}\n\n... (salida truncada)`;
+            }
+
+            const hasChanges = process.env.HAS_CHANGES === 'true' ? 'Sí' : 'No';
+            const body = `${marker}\n## Terraform Plan\n- Cambios detectados: **${hasChanges}**\n\n\`\`\`hcl\n${plan}\n\`\`\``;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find((c) => c.user.type === 'Bot' && c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
