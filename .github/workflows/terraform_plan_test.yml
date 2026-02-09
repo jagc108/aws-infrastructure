@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    uses: jagc108/scan-vulnerabilities/.github/workflows/terraform/all-scans.yaml@main
+    uses: jagc108/scan-vulnerabilities/.github/workflows/terraform-all-scans.yaml@main
     with:
       working-directory: terraform/env/test
     secrets:
