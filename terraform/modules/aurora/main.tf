@@ -44,9 +44,9 @@ module "this" {
   apply_immediately           = true
   skip_final_snapshot         = true
 
-  vpc_id                  = var.vpc_id
-  subnets                 = var.subnet_ids
-  vpc_security_group_ids  = [aws_security_group.aurora.id]
+  vpc_id                 = var.vpc_id
+  subnets                = var.subnet_ids
+  vpc_security_group_ids = [aws_security_group.aurora.id]
 
   instances = {
     writer = {}
