@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.11.1"
+  required_version = "~> 1.14.0"
 
   required_providers {
     aws = {
@@ -9,8 +9,8 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "terraform-state"
-    key          = "test.tfstate"
+    bucket       = "terraform-state-9240"
+    key          = "env/test/terraform.tfstate"
     region       = "us-east-1"
     use_lockfile = true
   }

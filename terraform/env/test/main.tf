@@ -19,11 +19,11 @@ module "eks" {
   subnet_ids         = module.vpc.private_subnets
 
   endpoint_public_access_cidrs = var.eks_endpoint_public_access_cidrs
-  eks_min_size       = var.eks_min_size
-  eks_max_size       = var.eks_max_size
-  eks_desired_size   = var.eks_desired_size
-  eks_instance_types = var.eks_instance_types
-  eks_addons         = var.eks_addons
+  eks_min_size                 = var.eks_min_size
+  eks_max_size                 = var.eks_max_size
+  eks_desired_size             = var.eks_desired_size
+  eks_instance_types           = var.eks_instance_types
+  eks_addons                   = var.eks_addons
 
   eks_admin_principals = var.eks_admin_principals
 
