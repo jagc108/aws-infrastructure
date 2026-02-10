@@ -7,7 +7,7 @@ public_subnets_cidrs  = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
 private_subnets_cidrs = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
 
 kubernetes_version               = "1.33"
-eks_instance_types               = ["t3.medium"]
+eks_instance_types               = ["t3.small"]
 eks_min_size                     = 2
 eks_max_size                     = 4
 eks_desired_size                 = 2
