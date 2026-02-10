@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "terraform-state"
+    bucket       = "terraform-state-9240"
     key          = "env/test/terraform.tfstate"
     region       = "us-east-1"
     use_lockfile = true
