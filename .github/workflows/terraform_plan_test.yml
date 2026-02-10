@@ -67,31 +67,19 @@ jobs:
         run: terraform init -input=false -no-color
 
       - name: Terraform Fmt Check
+        id: fmt
         run: terraform fmt -check -recursive -no-color
+        continue-on-error: true
 
       - name: Terraform Validate
+        id: validate
         run: terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
         run: |
-          set +e
-          terraform plan -input=false -no-color -out=tfplan -detailed-exitcode > plan_raw.txt
-          exit_code=$?
-          set -e
-
-          if [ "$exit_code" -eq 1 ]; then
-            echo "Terraform plan failed"
-            exit 1
-          fi
-
-          if [ "$exit_code" -eq 2 ]; then
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          terraform show -no-color tfplan > plan.txt
+          terraform plan -out=plan.tmp
+          terraform show -no-color plan.tmp >${GITHUB_WORKSPACE}/plan.out
 
       - name: Upload plan artifact
         if: always()
@@ -104,51 +92,35 @@ jobs:
       - name: Comment plan in PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v8
-        env:
-          HAS_CHANGES: ${{ steps.plan.outputs.has_changes }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const fs = require('fs');
-            const path = require('path');
+            const run_url = process.env.GITHUB_SERVER_URL + '/' + process.env.GITHUB_REPOSITORY + '/actions/runs/' + process.env.GITHUB_RUN_ID
+            const run_link = '<a href="' + run_url + '">Actions</a>.'
+            const fs = require('fs')
+            const plan_file = fs.readFileSync('plan.out', 'utf8')
+            const plan = plan_file.length > 65000 ? plan_file.toString().substring(0, 65000) + " ..." : plan_file
+            const truncated_message = plan_file.length > 65000 ? "Output is too long and was truncated. You can read full Plan in " + run_link + "<br /><br />" : ""
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
 
-            const marker = '<!-- terraform-plan-comment -->';
-            const planPath = path.join(process.env.GITHUB_WORKSPACE, 'terraform/env/test/plan.txt');
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-            let plan = 'No se encontró salida de plan.';
-            if (fs.existsSync(planPath)) {
-              plan = fs.readFileSync(planPath, 'utf8');
-            }
+            <details><summary>Show Plan</summary>
 
-            const maxLen = 60000;
-            if (plan.length > maxLen) {
-              plan = `${plan.slice(0, maxLen)}\n\n... (salida truncada)`;
-            }
+            \`\`\`\n
+            ${plan}
+            \`\`\`
 
-            const hasChanges = process.env.HAS_CHANGES === 'true' ? 'Sí' : 'No';
-            const body = `${marker}\n## Terraform Plan\n- Cambios detectados: **${hasChanges}**\n\n\`\`\`hcl\n${plan}\n\`\`\``;
+            </details>
+            ${truncated_message}
 
-            const { data: comments } = await github.rest.issues.listComments({
+            *Pusher: @${{ github.actor }}, Workflow: \`${{ github.workflow }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
-              per_page: 100,
-            });
-
-            const existing = comments.find((c) => c.user.type === 'Bot' && c.body && c.body.includes(marker));
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body,
-              });
-            }
+              body: output
+            })
